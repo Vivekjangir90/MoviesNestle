@@ -155,7 +155,7 @@ class MultiApp:
         with st.sidebar:
             app = option_menu(
                 menu_title='Main Menu ',
-                options=['HOME', "Search Here", 'Trending Movies', 'Popular Movies', 'Top Rated Movies',"Bollywood Movies","Bollywood Webseries", 'Action Movies', 'Comedy Movies', 'Horror Movies', 'Sci-Fi Movies', 'Thriller Movies', 'Rate_Us','About'],
+                options=['HOME', "Search Here", 'Trending Movies', 'Popular Movies', 'Top Rated Movies',"Bollywood Movies","Bollywood Web", 'Action Movies', 'Comedy Movies', 'Horror Movies', 'Sci-Fi Movies', 'Thriller Movies', 'Rate_Us','About'],
                 icons=['house-fill', 'search', 'easel', 'easel', 'easel', 'collection-play', 'collection-play', 'display', 'display', 'display', 'display', 'display', 'star', 'chat-text-fill'],
                 default_index=0,
                 # orientation="horizontal",
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     multi_app.add_app("Popular Movies", popular)
     multi_app.add_app("Top Rated Movies", top_rated)
     multi_app.add_app("Bollywood Movies", bollywood_movie)
-    multi_app.add_app("Bollywood Webseries", bollywood_web)
+    multi_app.add_app("Bollywood Web", bollywood_web)
     multi_app.add_app("Action Movies", action)
     multi_app.add_app("Comedy Movies", comedy)
     multi_app.add_app("Horror Movies", horror)
