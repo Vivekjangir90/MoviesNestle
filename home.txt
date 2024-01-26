@@ -1,0 +1,185 @@
+import requests
+import streamlit as st
+import pandas as pd
+import json
+
+# Initialize session state
+if 'page_number' not in st.session_state:
+    st.session_state.page_number = 1
+    st.session_state.button_states = {'previous_button': False, 'next_button': False}
+
+def app():
+    # global page_number
+    include_video = []
+    sort_by = "popularity.desc"
+    include_adult = []
+    params = {
+        # "include_adult":False,
+        # "include_video": str(include_video).lower(),
+        "page": "{}".format(st.session_state.page_number)
+        # "sort_by": sort_by,
+    }
+
+    col1, col2= st.columns([1,1])
+    with col1:
+        st.image("Logo.png", width=50) 
+    with col2:
+        st.title("Movie Genres")
+
+    gens = pd.read_json("genres.json")
+    genres= gens["name"].tolist()
+    genres_id = gens["id"].tolist()
+    selected_genres = st.multiselect("Select genres", genres)
+
+    gen_code = []
+    def name_to_gen_id():
+        for i in selected_genres:
+                for num, j in enumerate(genres):
+                    if i == genres[num]:
+                        gen_code.append(genres_id[num])
+
+    # for years
+    years = list(range(2024, 1800, -1))
+    selected_years = st.selectbox("Select years", years,None)
+    params["primary_release_year"] =selected_years
+
+    #for cast data
+    data  = pd.read_json("popular.json")
+    casts= data["name"].tolist()
+    casts_id= data["id"].tolist()
+    selected_casts = st.multiselect("Select casts", casts)
+
+    cast_code = []
+    def name_to_cast_id():
+        for i in selected_casts:
+                for num, j in enumerate(casts):
+                    if i == casts[num]:
+                        cast_code.append(casts_id[num]) 
+
+    # Get results from tmdb discover api
+    def discover_movies(api_key):
+        url = "https://api.themoviedb.org/3/discover/movie"
+        headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        }
+        params1 = params
+        full_url = requests.Request('GET', url, headers=headers, params=params).prepare().url
+        st.text(full_url)
+        response = requests.get(url,params=params1, headers=headers)
+        # top = requests.get(full_url)
+        response= response.json()
+        return response
+
+    #print movies name and poster  
+    def print_movies(key):
+        title_m = [x["title"] for x in key['results']]
+        post_m = [x["poster_path"] for x in key['results']]
+        raw_num = len(title_m) // 5 + 1
+        a = 0
+        for j in range(raw_num):
+            with st.container():
+                cols = st.columns([1, 1, 1, 1, 1])
+                for i, nam in enumerate(title_m[a:a + 5]):
+                    with cols[i]:
+                        try:
+                            if nam is not None:
+                                st.text(nam)
+                                st.image("https://image.tmdb.org/t/p/w500/{}".format(post_m[a + i]))
+                        except Exception as e:
+                            pass                  
+                a += 5
+
+    # Get results from tmdb discover api(tv)
+    def discover_tv(api_key):
+        params["first_air_date_year"] =selected_years
+
+        url = "https://api.themoviedb.org/3/discover/tv"
+        headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        }
+        params1 = params
+        # full_url = requests.Request('GET', url, headers=headers, params=params).prepare().url
+        # st.text(full_url)
+        response = requests.get(url,params=params1, headers=headers)
+        # top = requests.get(full_url)
+        response= response.json()
+        st.text(response)
+        return response
+
+    #print movies name and poster  
+    def print_tv(key):
+        title_m = [x["original_name"] for x in key['results']]
+        post_m = [x["poster_path"] for x in key['results']]
+        raw_num = len(title_m) // 5 + 1
+        a = 0
+        for j in range(raw_num):
+            with st.container():
+                cols = st.columns([1, 1, 1, 1, 1])
+                for i, nam in enumerate(title_m[a:a + 5]):
+                    with cols[i]:
+                        try:
+                            if nam is not None:
+                                st.text(nam)
+                                st.image("https://image.tmdb.org/t/p/w500/{}".format(post_m[a + i]))
+                        except Exception as e:
+                            pass                  
+                a += 5
+
+
+    # Example usage:
+    api_key = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYjQ2ZDhkODhjNjgwYzAxOGYwMjZlYTAzOWQzNmY5OCIsInN1YiI6IjY1YTdmNzM0Mzg3NjUxMDEzMDFhNmViZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XGohA1BMLe83L_GR87D6hI8B2HVtdR0zpuJeizbH9_8"
+
+    # @st.cache_data
+    def perform_discovery():
+        api_key =  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYjQ2ZDhkODhjNjgwYzAxOGYwMjZlYTAzOWQzNmY5OCIsInN1YiI6IjY1YTdmNzM0Mzg3NjUxMDEzMDFhNmViZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XGohA1BMLe83L_GR87D6hI8B2HVtdR0zpuJeizbH9_8"
+        name_to_gen_id()
+        params["with_genres"] = ",".join(str(genre) for genre in gen_code)
+        name_to_cast_id()
+        params["with_cast"] = ",".join(str(cast) for cast in cast_code)
+        results1 = discover_movies(api_key)
+        print_movies(results1)
+        results2 = discover_tv(api_key)
+        print_tv(results2)
+        
+    # @st.cache_data
+    def perform_discovery2():
+        api_key =  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYjQ2ZDhkODhjNjgwYzAxOGYwMjZlYTAzOWQzNmY5OCIsInN1YiI6IjY1YTdmNzM0Mzg3NjUxMDEzMDFhNmViZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XGohA1BMLe83L_GR87D6hI8B2HVtdR0zpuJeizbH9_8"
+        name_to_gen_id()
+        params["with_genres"] = ",".join(str(genre) for genre in gen_code)
+        name_to_cast_id()
+        params["with_cast"] = ",".join(str(cast) for cast in cast_code)
+        results1 = discover_movies(api_key)
+        print_movies(results1)
+        results2 = discover_tv(api_key)
+        print_tv(results2)
+
+    def perform_discovery_with_page_update():
+        api_key =  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYjQ2ZDhkODhjNjgwYzAxOGYwMjZlYTAzOWQzNmY5OCIsInN1YiI6IjY1YTdmNzM0Mzg3NjUxMDEzMDFhNmViZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XGohA1BMLe83L_GR87D6hI8B2HVtdR0zpuJeizbH9_8"
+
+        perform_discovery()
+        
+    if st.button("result_button"):
+        # st.experimental_rerun()
+        perform_discovery2()
+        # @st.cache_data
+    # def buttons():
+    if st.session_state.button_states['previous_button']:
+        st.session_state.page_number = max(1, st.session_state.page_number - 1)
+        st.session_state.button_states['previous_button'] = False
+        # perform_discovery()
+        perform_discovery_with_page_update()
+    if st.session_state.button_states['next_button']:
+        st.session_state.page_number += 1
+        st.session_state.button_states['next_button'] = False
+        # perform_discovery()
+        perform_discovery_with_page_update()
+
+    # Example usage:
+    # api_key = "your_api_key_here"
+
+    # Use st.session_state to store button states
+    st.session_state.button_states['previous_button'] = st.button("previous")
+    st.session_state.button_states['next_button'] = st.button("next")
+    # buttons()
