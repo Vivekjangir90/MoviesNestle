@@ -28,7 +28,7 @@ def app():
     conn = st.connection("gsheets", type=GSheetsConnection)
 
     # Fetch existing vendors data
-    existing_data = conn.read(worksheet="rating", spreadsheet="1iGX1VuWGwueZjB47M-joWd75yyavWl7ogG3EEvarrH8" ,usecols=list(range(3)), ttl=5)
+    existing_data = conn.read(worksheet="rating" ,usecols=list(range(3)), ttl=5)
     existing_data = existing_data.dropna(how="all")
 
     # st.dataframe(existing_data)
