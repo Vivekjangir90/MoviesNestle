@@ -73,15 +73,16 @@ if 'page_number' not in st.session_state:
 
 
 # @st.cache_data
-def get_img_as_base64(file):
-    with open(file, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+#def get_img_as_base64(file):
+#    with open(file, "rb") as f:
+#        data = f.read()
+#    return base64.b64encode(data).decode()
 
 
-img = get_img_as_base64("image.jpg")
-img1 = get_img_as_base64("image1.jpeg")
+#img = get_img_as_base64("image.jpg")
+#img1 = get_img_as_base64("image1.jpeg")
 
+"""
 page_bg_img = f"""
 <style>
 [data-testid="stAppViewContainer"] > .main {{
@@ -115,7 +116,7 @@ right: 2rem;
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-
+"""
 
 
 
