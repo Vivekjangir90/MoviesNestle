@@ -82,41 +82,40 @@ if 'page_number' not in st.session_state:
 #img = get_img_as_base64("image.jpg")
 #img1 = get_img_as_base64("image1.jpeg")
 
-"""
-page_bg_img = f"""
-<style>
-[data-testid="stAppViewContainer"] > .main {{
+
+#page_bg_img = f"""
+#<style>
+#[data-testid="stAppViewContainer"] > .main {{
 # background-image: url("https://images.unsplash.com/photo-1501426026826-31c667bdf23d");
 # background-image: url("data:image/png;base64,{img1}");
 
-background-size: 180%;
-background-position: fit;
-background-repeat: no-repeat;
-background-attachment: fixed;
-}}
+#background-size: 180%;
+#background-position: fit;
+#background-repeat: no-repeat;
+#background-attachment: fixed;
+#}}
 
-[data-testid="stSidebar"] > div:first-child {{
+#[data-testid="stSidebar"] > div:first-child {{
 # background-image: url("data:image/png;base64,{img}");
-background-position: left; 
-background-repeat: no-repeat;
-background-attachment: fixed;
-}}
-[data-testid="stMarkdownContainer"] > div:data-testid="stMarkdownContainer" {{
-font_size = 24px;
-}}
-[data-testid="stHeader"] {{
-background: rgba(0,0,0,0);
-}}
+#background-position: left; 
+#background-repeat: no-repeat;
+#background-attachment: fixed;
+#}}
+#[data-testid="stMarkdownContainer"] > div:data-testid="stMarkdownContainer" {{
+#font_size = 24px;
+#}}
+#[data-testid="stHeader"] {{
+#background: rgba(0,0,0,0);
+#}}
 
-[data-testid="stToolbar"] {{
-right: 2rem;
-}}
-</style>
-"""
+#[data-testid="stToolbar"] {{
+#right: 2rem;
+#}}
+#</style>
+#"""
 
-st.markdown(page_bg_img, unsafe_allow_html=True)
+#st.markdown(page_bg_img, unsafe_allow_html=True)
 
-"""
 
 
 
